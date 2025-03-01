@@ -14,9 +14,9 @@ OrdererOrgs:
 PeerOrgs:
     # Org1
     - Name: Org1
-    Domain: org1.kalimahlf.com
-    EnableNodeOUs: true
-    Template:
+      Domain: org1.kalimahlf.com
+      EnableNodeOUs: true
+      Template:
         Count: 1
-    Users:
+      Users:
         Count: 1
