@@ -1,0 +1,22 @@
+# Kalima HLF crypto-config
+# Brian Hildebrand
+
+# OrdererOrgs - defines organizations that manage orderer nodes
+OrdererOrgs:
+    # Orderer
+    - Name: Orderer
+      Domain: kalimahlf.com
+      EnableNodeOUs: true
+      Specs:
+          - Hostname: orderer 
+
+# PeerOrgs - defines organizations that manage peer nodes
+PeerOrgs:
+	# Org1
+	- Name: Org1
+	Domain: org1.kalimahlf.com
+	EnableNodeOUs: true
+	Template:
+		Count: 1
+	Users:
+		Count: 1
