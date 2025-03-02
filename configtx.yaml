@@ -1,0 +1,197 @@
+# Kalima HLF configtx
+# Brian Hildebrand
+
+# Organizations - defines organizational identities
+Organizations:
+    # defines a membership service provider (MSP)?????
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+
+        # MSP config path
+        MSPDir: crypto-config/ordererOrganizations/kalimahlf.com/msp
+
+        # defines the policies at this level of the config tree
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererMSP.admin')"
+
+    - &Org1
+        Name: Org1MSP
+        ID: Org1MSP
+        
+        # MSP config path
+        MSPDir: crypto-config/peerOrganizations/org1.kalimahlf.com/msp
+
+        # defines the policies at this level of the config tree
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Org1MSP.admin', 'Org1MSP.peer', 'Org1MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Org1MSP.admin', 'Org1MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Org1MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Org1MSP.peer')"
+
+        AnchorPeers:
+            # defines peer locations for cross org gossip communication
+            # note: only encoded in the genesis block in the Application section
+            - Host: peer0.Org1.kalimahlf.com
+              Port: 7051
+
+# defines the capabilities of the fabric network, which are features that must be present in the
+# fabric binary for that binary to safely participate in the fabric network
+Capabilities:
+    # channel capabilities apply to both orderers & peers; therefore it must be supported by both
+    Channel: &ChannelCapabilities
+        # set to true to require it
+        V2_0: true
+    
+    # orderer capabilities only apply to orderers
+    Orderer: &OrdererCapabilities        
+        # set to true to require it
+        V2_0: true
+
+    # application capabilities only apply the to peer network
+    Application: &ApplicationCapabilities
+        # set to true to require it
+        V2_0: true
+        V1_3: false
+        V1_2: false
+        V1_1: false
+
+# defines values of application related parameters to encode into a config transaction or genesis block
+Application: &ApplicationDefaults
+    # defines list of orgs that are participants on the application side of the network
+    Organizations:
+        
+    # defines the policies at this level of the config tree
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        LifecycleEndorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+        Endorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+
+    Capabilities:
+        <<: *ApplicationCapabilities
+
+
+# defines the values of orderer related parameters to encode into a config transaction or genesis block
+Orderer: &OrdererDefaults
+    # orderer implementation to start ("solo" or "kafka")
+    OrdererType: solo
+    
+    Addresses:
+        - orderer.kalimahlf.com:7050
+    
+    # amount of time to wait before creating a batch
+    BatchTimeout: 2s
+    
+    # controls the number of messages batched into a block
+    BatchSize:
+        # max number of messages in a batch
+        MaxMessageCount: 10
+        
+        # absolute maximum number of bytes allowed for serialized messages in a batch
+        AbsoluteMaxBytes: 99 MB
+        
+        # preferred max number of bytes allowed for serialized messages in a batch
+        PreferredMaxBytes: 512 KB
+        
+    Kafka:
+        # list of Kafka brokers to which the orderer connects using IP:port notation
+        Brokers:
+            - 127.0.0.1:9092
+    
+    # list of orgs defined as participants on the orderer side of the network
+    Organizations:
+        
+    # defines the policies at this level of the config tree
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        # specifies what signatures must be included in the block from the orderer for a peer to validate it
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+
+
+# defines the values of channel related parameters to encode into a config transaction or genesis block
+Channel: &ChannelDefaults
+    # defines the policies at this level of the config tree
+    Policies:
+        # who may invoke the 'Deliver' API
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        # who may invoke the 'Broadcast' API
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        # by default, who may modify elements at this config level
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+
+    # defines channel level capabilities
+    Capabilities:
+        <<: *ChannelCapabilities
+
+
+# different configuration profiles may be encoded here to be specified as parameters to the configtxgen tool
+Profiles:
+    OneOrgOrdererGenesis:
+        <<: *ChannelDefaults
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+            Capabilities:
+                <<: *OrdererCapabilities
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *Org1
+    OneOrgChannel:
+        Consortium: SampleConsortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Org1
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+
+
+
