@@ -1,0 +1,21 @@
+# Service definition for Hyperledger fabric peer server
+[Unit]
+Description=hyperledger fabric-peer0-org1 server - Peer0/Org1 for hyperledger fabric
+Documentation=https://hyperledger-fabric.readthedocs.io/
+Wants=network-online.target
+After=network-online.target
+[Service]
+Type=simple
+Restart=on-failure
+# RestartSec=60
+Environment=FABRIC_CFG_PATH=/etc/hyperledger/fabric
+Environment=CORE_PEER_ID=peer0.org1.car.com
+Environment=CORE_LOGGING_PEER=info
+Environment=CORE_CHAINCODE_LOGGING_LEVEL=info
+Environment=CORE_PEER_LOCALMSPID=Org1MSP
+Environment=CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peerOrg1/msp
+Environment=CORE_PEER_ADDRESS=peer0.org1.car.com:7051
+ExecStart=/usr/local/bin/peer node start
+[Install]
+WantedBy=multi-user.target
+
