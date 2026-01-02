@@ -46,31 +46,29 @@ elif [ $PARAM1 = "add" ]; then
 	# create new candidate - adds new candidate to world state w/ given details	
 	# Usage: ./queryLedger.sh add [firstname] [lastname] [party]
 	# E.g.:  ./queryledger.sh add George Washington Federalist
-	
-	# generate random 9-digit id
-	id=$(date +"H8VA%M%S%H")
-	echo "new candidate id: $id"
-	
-	firstname=$2
-	lastname=$3
-	party=$4
-	
+	a=$((RANDOM % 10))
+	b=$((RANDOM % 10))
+	id="H8VA0123$a$b"
+	echo "id: $id"
+	first=${2:-"John"}
+	last=${3:-"Doe"}
+	party=${4:-"Democrat"}
 	${PEER1_ORG1} chaincode invoke \
 	   -C aether \
 	   -n kalima \
-	   -c '{"Args":["AddCandidate","'$id'","'$firstname'","'$lastname'","'$party'"]}' \
+	   -c '{"Args":["AddCandidate","'$id'","'$first'","'$last'","'$party'"]}' \
 	   --peerAddresses peer0.org1.example.com:7051 \
 	   --peerAddresses peer0.org2.example.com:9051 \
 	   --tlsRootCertFiles ${ORG1_TLS_ROOTCERT_FILE} \
 	   --tlsRootCertFiles ${ORG2_TLS_ROOTCERT_FILE} \
-	   --waitForEvent
+	   --waitForEvent \
+	   --waitForEventTimeout 300s
 elif [ $PARAM1 = "update" ]; then
-	# update candidate details - updates car owner using given id & new owner name
+	# update candidate details - updates candidate details using given details
 	# Usage: ./queryLedger.sh update [id] [party]
 	# E.g.:  ./queryLedger.sh update H8VA01234 Republican
 	id=$2
 	party=$3
-	
 	${PEER1_ORG1} chaincode invoke \
 	   -C aether \
 	   -n kalima \
@@ -80,10 +78,22 @@ elif [ $PARAM1 = "update" ]; then
 	   --tlsRootCertFiles ${ORG1_TLS_ROOTCERT_FILE} \
 	   --tlsRootCertFiles ${ORG2_TLS_ROOTCERT_FILE} \
 	   --waitForEvent
+elif [ $PARAM1 = "all2" ]; then	
+	${PEER1_ORG1} chaincode invoke \
+	   -C aether \
+	   -n kalima \
+	   -c '{"Args":["QueryAllCandidates"]}' \
+	   --peerAddresses peer0.org1.example.com:7051 \
+	   --peerAddresses peer0.org2.example.com:9051 \
+	   --tlsRootCertFiles ${ORG1_TLS_ROOTCERT_FILE} \
+	   --tlsRootCertFiles ${ORG2_TLS_ROOTCERT_FILE} \
+	   --waitForEvent | jq .result
 fi
 
 # TODO: 
 # > rewrite query inv'l car to be similar to create
 # > rename queryLedger.sh to something that relects its ability to invoke!!!!
 # > help param section
-# > upload to github
+
+
+
