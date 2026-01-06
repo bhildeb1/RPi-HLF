@@ -188,19 +188,8 @@ ${PEER1_ORG2} chaincode query \
   --tlsRootCertFiles ${ORG2_TLS_ROOTCERT_FILE}
 
 cat <<EOF
-
 Total setup execution time : $(($(date +%s) - starttime)) secs ...
-
-KalimaHLF Reference:
-  Use provided bash scripts (or write your own) to interact with KalimaHLF blockchain.
-  
-  .queryLedger.sh all		# output all cars
-  .queryLedger.sh car		# query ind'l car using given id
-  .queryLedger.sh create	# create new car
-  .queryFabric.sh assign	# change car owner
-  ...
-  AddCandidate
-  
-  More coming! Stay tuned!!! ...
-  
 EOF
+
+./kalima.sh help
+
