@@ -1,0 +1,168 @@
+# SECTION: Organizations
+Organizations:
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        #MSPDir: /etc/hyperledger/msp/orderer/msp/
+        MSPDir: ./crypto-config/ordererOrganizations/car.com/orderers/orderer.car.com/msp
+
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererMSP.admin')"
+
+    - &Org1
+        Name: Org1MSP
+        ID: Org1MSP
+        #MSPDir: /etc/hyperledger/msp/peerOrg1/msp
+        MSPDir: ./crypto-config/peerOrganizations/org1.car.com/msp
+
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Org1MSP.admin', 'Org1MSP.peer', 'Org1MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Org1MSP.admin', 'Org1MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Org1MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Org1MSP.peer')"
+
+        AnchorPeers:
+            - Host: peer0.org1.car.com
+              Port: 7051
+
+# SECTION: Capabilities
+Capabilities:
+    Channel: &ChannelCapabilities
+        V2_0: true
+        #V1_4_3: true
+        #V1_3: false
+        #V1_1: false
+
+    Orderer: &OrdererCapabilities
+        V2_0: true
+        #V1_4_2: true
+        #V1_1: false
+
+    Application: &ApplicationCapabilities
+        V2_0: true
+        #V2_5: true
+        #V1_4_2: true
+        #V1_3: false
+        #V1_2: false
+        #V1_1: false
+
+# SECTION: Application
+Application: &ApplicationDefaults
+    Organizations:
+
+    # /Channel/Application/<PolicyName>
+    Policies: #&ApplicationDefaultPolicies
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            #Rule: "ANY Admins"
+            Rule: "MAJORITY Admins"
+        LifecycleEndorsement:
+            Type: ImplicitMeta
+            #Rule: "ANY Endorsement"
+            Rule: "MAJORITY Endorsement"
+        Endorsement:
+            Type: ImplicitMeta
+            #Rule: "ANY Endorsement"
+            Rule: "MAJORITY Endorsement"
+
+    Capabilities:
+        <<: *ApplicationCapabilities
+
+# SECTION: Orderer
+Orderer: &OrdererDefaults
+    OrdererType: solo
+    Addresses:
+        - orderer.car.com:7050
+
+    BatchTimeout: 2s
+
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+
+    Organizations:
+
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            #Rule: "ANY Admins"
+            Rule: "MAJORITY Admins"
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        ChannelCreation:
+            Type: ImplicitMeta
+            Rule: "ANY Admins"
+            #Rule: "ANY Writers"
+
+# SECTION: Channel
+Channel: &ChannelDefaults
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            #Rule: "ANY Admins"
+            Rule: "MAJORITY Admins"
+
+    Capabilities:
+        <<: *ChannelCapabilities
+
+
+# SECTION: Profile
+Profiles:
+    OneOrgOrdererGenesis:
+        <<: *ChannelDefaults
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+            Capabilities:
+              <<: *OrdererCapabilities
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *Org1
+
+    OneOrgChannel:
+        Consortium: SampleConsortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Org1
+            Capabilities:
+               <<: *ApplicationCapabilities

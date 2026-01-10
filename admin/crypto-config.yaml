@@ -1,0 +1,27 @@
+
+# OrdererOrgs - define orderer
+OrdererOrgs:
+  - Name: Orderer
+    Domain: car.com
+    EnableNodeOUs: true
+    CA:
+        Country: US
+        Province: California
+        Locality: San Francisco
+    Specs:
+      - Hostname: orderer
+
+# PeerOrgs - define managing peer nodes
+PeerOrgs:
+  - Name: Org1
+    Domain: org1.car.com
+    EnableNodeOUs: true
+    CA:
+        Country: US
+        Province: California
+        Locality: San Francisco
+    Template:
+      Count: 1      # number of peers in org
+
+    Users:
+      Count: 1      # number of users (in addition to admin)
