@@ -10,19 +10,19 @@ Restart=on-failure
 #RestartSec=60
 Environment=FABRIC_LOGGING_SPEC=debug
 Environment=FABRIC_CFG_PATH=/etc/hyperledger/fabric
-Environment=CORE_PEER_ID=peer0.org1.kalima.com
+Environment=CORE_PEER_ID=peer0.org1.car.com
 #Environment=CORE_LOGGING_PEER=info
 Environment=CORE_LOGGING_PEER=debug
 #Environment=CORE_CHAINCODE_LOGGING_LEVEL=info
 Environment=CORE_CHAINCODE_LOGGING_LEVEL=debug
 Environment=CORE_PEER_LOCALMSPID=Org1MSP
 Environment=CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peerOrg1/msp
-#Environment=CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.kalima.com/msp
-Environment=CORE_PEER_ADDRESS=peer0.org1.kalima.com:7051
+#Environment=CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.car.com/msp
+Environment=CORE_PEER_ADDRESS=peer0.org1.car.com:7051
 ExecStart=/usr/local/bin/peer node start
-#StandardOutput=append:/var/log/fabric-peer0-org1.log
+StandardOutput=append:/var/log/fabric-peer0-org1.log
 #StandardOutput=/var/log/fabric-peer0-org1.log
-#StandardError=append:/var/log/fabric-peer0-org1.log
+StandardError=append:/var/log/fabric-peer0-org1.log
 #StandardError=/var/log/fabric-peer0-org1.log
 [Install]
 WantedBy=multi-user.target
