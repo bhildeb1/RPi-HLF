@@ -2,7 +2,7 @@
 # OrdererOrgs - define orderer
 OrdererOrgs:
   - Name: Orderer
-    Domain: kalima.com
+    Domain: car.com
     EnableNodeOUs: true
     CA:
         Country: US
@@ -14,7 +14,7 @@ OrdererOrgs:
 # PeerOrgs - define managing peer nodes
 PeerOrgs:
   - Name: Org1
-    Domain: org1.kalima.com
+    Domain: org1.car.com
     EnableNodeOUs: true
     CA:
         Country: US
