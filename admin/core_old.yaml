@@ -160,32 +160,33 @@ peer:
         # When this is false, it means that only peer admins can perform non channel scoped queries.
         orgMembersAllowedAccess: false
 
-
 vm:
-    endpoint: unix:///var/run/docker.sock
+    endpoint:
+    #endpoint: unix:///var/run/docker.sock
+    #endpoint: http://localhost:2375
 
-    docker:
-        tls:
-            enabled: false
-            ca:
-                file: docker/ca.crt
-            cert:
-                file: docker/tls.crt
-            key:
-                file: docker/tls.key
-
-        attachStdout: false
-
-        hostConfig:
-            NetworkMode: host
-            Dns:
-               # - 192.168.0.1
-             LogConfig:
-                Type: json-file
-                Config:
-                    max-size: "50m"
-                    max-file: "5"
-            Memory: 2147483648
+    #docker:
+    #    tls:
+    #        enabled: false
+    #        ca:
+    #            file: docker/ca.crt
+    #        cert:
+    #            file: docker/tls.crt
+    #        key:
+    #            file: docker/tls.key
+    #
+    #    attachStdout: false
+    #
+    #    hostConfig:
+    #        NetworkMode: host
+    #        Dns:
+    #           # - 192.168.0.1
+    #        LogConfig:
+    #            Type: json-file
+    #            Config:
+    #                max-size: "50m"
+    #                max-file: "5"
+    #        Memory: 2147483648
 
 chaincode:
 
@@ -197,49 +198,43 @@ chaincode:
         path:
         name:
 
-    #externalBuilders:
-    #  - name: ccaas_builder
-    #    path: /opt/hyperledger/ccaas_builder
-    #    propogateEnvironment:
-    #       - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG
-
-    #externalBuilders:
-    #  - name: chaincode-builder
-    #    path: $GOPATH/chaincode-builder
-    #    environmentWhitelist:
-    #      - GOPROXY
-    #      - GONOPROXY
-    #      - GOSUMDB
-    #      - GONOSUMDB
-    #      - GOCACHE
-    #      - GOPATH
-    #      - GOROOT
-    #      - HOME
-    #      - XDG_CACHE_HOME
+    externalBuilders:
+      - name: ccaas_builder
+        #path: /opt/hyperledger/ccaas_builder
+        path: ~/fabric/builders/ccaas
+        propagateEnvironment:
+          - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG
+      #- name: chaincode-builder
+      #  path: ~/fabric/chaincode-builder
+        #environmentWhitelist:
+        #  - GOPROXY
+        #  - GONOPROXY
+        #  - GOSUMDB
+        #  - GONOSUMDB
+        #  - GOCACHE
+        #  - GOPATH
+        #  - GOROOT
+        #  - HOME
+        #  - XDG_CACHE_HOME
 
     # Generic builder environment, suitable for most chaincode types
-    builder: chinyati/fabric-ccenv:arm64-2.1.0
-    #builder: $(DOCKER_NS)/fabric-ccenv:2.4
+    #builder: $(DOCKER_NS)/fabric-ccenv:latest
     #builder: $(CORE_VM_ENDPOINT)
     #builder: /var/run
-    #builder:
-    #builder: ccenv:arm64
+    builder:
 
     # Enables/disables force pulling of the base docker images (listed below)
     # during user chaincode instantiation.
     # Useful when using moving image tags (such as :latest)
-    pull: false
+    #pull: false
 
-    golang:
-        # golang will never need more than baseos
-        #runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASE_VERSION)
-        runtime: chinyati/fabric-baseos:arm64-2.1.0
-
-
-
-        # whether or not golang chaincode should be linked dynamically
-        dynamicLink: false
-
+    #golang:
+    #    # golang will never need more than baseos
+    #    runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASE_VERSION)
+    #
+    #    # whether or not golang chaincode should be linked dynamically
+    #    dynamicLink: false
+    #
     #car:
     #    # car may need more facilities (JVM, etc) in the future as the catalog
     #    # of platforms are expanded.  For now, we can just use baseos
@@ -275,8 +270,8 @@ chaincode:
     # In dev mode, user runs the chaincode after starting peer from
     # command line on local machine.
     # In net mode, peer will run chaincode in a docker container.
-    mode: net
-    #mode: dev
+    #mode: net
+    mode: dev
 
     # keepalive in seconds. In situations where the communiction goes through a
     # proxy that does not support keep-alive, this parameter will maintain connection
