@@ -18,8 +18,8 @@ Environment=ORDERER_GENERAL_LOCALMSPID=OrdererMSP
 Environment=ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/msp/orderer/msp
 Environment=FABRIC_CFG_PATH=/etc/hyperledger/fabric
 ExecStart=/usr/local/bin/orderer start
-#StandardOutput=append:/var/log/fabric-orderer.log
-#StandardError=append:/var/log/fabric-orderer.log
+StandardOutput=append:/var/log/fabric-orderer.log
+StandardError=append:/var/log/fabric-orderer.log
 [Install]
 WantedBy=multi-user.target
 

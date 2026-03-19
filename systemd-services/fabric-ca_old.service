@@ -14,8 +14,8 @@ Environment=CA_CFG_PATH=/etc/hyperledger/fabric-ca-server
 #Environment=CA_CFG_PATH=$HOME/fabric/
 #ExecStart=/usr/local/bin/fabric-ca-server start -b admin:adminpw 
 ExecStart=/usr/local/bin/fabric-ca-server start -b admin:adminpw -d 
-#StandardOutput=append:/var/log/fabric-ca-server.log
-#StandardError=append:/var/log/fabric-ca-server.log
+StandardOutput=append:/var/log/fabric-ca-server.log
+StandardError=append:/var/log/fabric-ca-server.log
 [Install]
 WantedBy=multi-user.target
 
